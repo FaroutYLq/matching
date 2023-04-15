@@ -56,7 +56,8 @@ class Distance:
 
         return combined
 
-def Mahalanobis(Distance):
+
+class Mahalanobis(Distance):
     def __init__(self, data, simu, covariates):
         super().__init__(data, simu, covariates)
         self.method = 'mahalanobis'
@@ -83,7 +84,7 @@ def Mahalanobis(Distance):
         data_matrix, simu_matrix = self.prep_matrix()
 
         diff = simu_matrix[:, np.newaxis] - data_matrix
-        distance_matrix = np.einsum('ijk,kl,ijl->ij', diff, sig_i, diff)
+        distance_matrix = np.einsum('ijk,kl,ijl->ij', diff, self.sig_i, diff)
         distance_matrix = np.array(distance_matrix)
 
         return distance_matrix
@@ -97,8 +98,8 @@ def Mahalanobis(Distance):
         simu_index, data_index = np.meshgrid(simu_index, data_index, indexing='ij')
 
         distances = pd.DataFrame({
-            'simu_index': T_event.ravel(),
-            'data_index': C_event.ravel(),
+            'simu_index': simu_index.ravel(),
+            'data_index': data_index.ravel(),
             'distance': distance_matrix.ravel()
         })
 
