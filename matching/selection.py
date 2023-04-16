@@ -24,8 +24,9 @@ class MinimumMatchingRate(Selection):
         self.data = data
         self.data_counts = len(data)
         self.simu_counts = len(simu)
+        self.method = 'MinimumMatchingRate'
 
-    def select(self, min_match_rate):
+    def select(self, min_match_rate, _print_survival_ratio=False):
         """Select data based on minimum sample rate. We will check how often a data event is matched to
         simulation. On average, one data event will be matched simu_counts/data_counts times, and we call this 
         ratio average matching times.
@@ -34,6 +35,7 @@ class MinimumMatchingRate(Selection):
 
         Args:
             min_match_rate (float): Minimum times of average matching to pass selection.
+            _print_survival_ratio (bool, optional): Print how much data survived selection. Defaults to False.
 
         Returns:
             selected_data_mask (1darray of bool): Data selection mask. True means selected.
@@ -52,5 +54,9 @@ class MinimumMatchingRate(Selection):
         selected_data_idx = np.array(selected_counts.index) - self.simu_counts
         selected_data_mask = np.zeros(self.data_counts, dtype=np.bool)
         selected_data_mask[selected_data_idx] = True
+
+        # Print how much data survived selection
+        if _print_survival_ratio:
+            print('Survival ratio:', selected_data_mask.sum()/self.data_counts)
 
         return selected_data_mask
