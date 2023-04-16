@@ -39,7 +39,6 @@ class MinimumMatchingRate(Selection):
             match (str, optional): Matching method definition. Defaults to 'NearestNeighbor'.
         """
         super().__init__(data, simu, covariates, distance, match)
-        self.data = data
         self.data_counts = len(data)
         self.simu_counts = len(simu)
         self.method = 'MinimumMatchingRate'
