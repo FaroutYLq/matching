@@ -58,9 +58,11 @@ class Distance:
 
 
 class Mahalanobis(Distance):
+    """Distance computation based on Mahalnobis distance, which is normalized Euclidean distances.
+    """
     def __init__(self, data, simu, covariates):
         super().__init__(data, simu, covariates)
-        self.method = 'mahalanobis'
+        self.method = 'Mahalanobis'
         self.sig_i = self.calc_inverse_sig()
 
     def calc_inverse_sig(self):
@@ -105,7 +107,7 @@ class Mahalanobis(Distance):
 
         return distance_matrix
 
-    def calc_all_distance(self):
+    def calc_distances(self):
         """Get the dataframe of distance between two events.
 
         Returns:
