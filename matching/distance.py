@@ -25,9 +25,9 @@ class Distance:
         Raises:
             TypeError: Only numpy arrays and pandas dataframe are supported for the input data/simulation type!
         """
-        if isinstance(data, np.array):
+        if isinstance(data, np.ndarray):
             data = pd.DataFrame(data=data)
-        elif isinstance(data, pd.core.frame.DataFrame):
+        elif isinstance(data, pd.   core.frame.DataFrame):
             pass
         else:
             raise TypeError('Only numpy arrays and pandas dataframe are supported for the input data/simulation type!')
@@ -71,7 +71,7 @@ class Mahalanobis(Distance):
         """
         # Get the covariates into an array
         df = self.df
-        x = np.array([df[covariate] for covariate in df.columns[1:]])
+        x = np.array([df[covariate] for covariate in df.columns[1:-1]])
 
         # Compute inverse of covariance of covariates matrix
         sig = np.cov(x)
