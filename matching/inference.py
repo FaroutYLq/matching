@@ -25,6 +25,11 @@ class Inference:
         self.matches = match_object.find_matches()
 
     def match_simu(self):
+        """Match one data event to every simulation event.
+
+        Returns:
+            matched_data (dataframe): Matched data events.
+        """
         matches = self.matches
 
         # Count how many time one data event has been matched
