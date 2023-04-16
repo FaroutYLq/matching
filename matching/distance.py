@@ -64,6 +64,11 @@ class Mahalanobis(Distance):
         self.sig_i = self.calc_inverse_sig()
 
     def calc_inverse_sig(self):
+        """Compute the inverse of covariance matrix.
+
+        Returns:
+            sig_i (2darray): The inverse of covariance matrix.
+        """
         # Get the covariates into an array
         df = self.df
         x = np.array([df[covariate] for covariate in df.columns[1:]])
@@ -75,12 +80,23 @@ class Mahalanobis(Distance):
         return sig_i
 
     def prep_matrix(self):
+        """Extract covariate matrix from data and simu.
+
+        Returns:
+            data_matrix (2darray): Data covariate matrix, where each row is a feature vector of certain event.
+            simu_matrix (2darray): Simu covariate matrix, where each row is a feature vector of certain event.
+        """
         df = self.df
         data_matrix = df[~df['is_simu']].drop(columns=['index', 'is_simu']).to_numpy()
         simu_matrix = df[df['is_simu']].drop(columns=['index', 'is_simu']).to_numpy()
         return data_matrix, simu_matrix
 
     def calc_distance_matrix(self):
+        """Compute the distance between two events (one simulation one data).
+
+        Returns:
+            distance_matrix (2darray): The matrix {i,j} distance between two events i and j.
+        """
         data_matrix, simu_matrix = self.prep_matrix()
 
         diff = simu_matrix[:, np.newaxis] - data_matrix
@@ -90,6 +106,11 @@ class Mahalanobis(Distance):
         return distance_matrix
 
     def calc_all_distance(self):
+        """Get the dataframe of distance between two events.
+
+        Returns:
+            distances (dataframe): Distance between two events.
+        """
         df = self.df
         distance_matrix = self.calc_distance_matrix()
 
