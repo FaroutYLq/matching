@@ -3,6 +3,15 @@ from .match import *
 
 class Selection:
     def __init__(self, data, simu, covariates, distance='Mahalanobis', match='NearestNeighbor'):
+        """Init by getting matching result.
+
+        Args:
+            data (dataframe): Data to select.
+            simu (dataframe): Simulation to refer.
+            covariates (list): A list of strings, corresponding to field names of covariates in matching.
+            distance (str, optional): Distance definition. Defaults to 'mahalanobis'.
+            match (str, optional): Matching method definition. Defaults to 'NearestNeighbor'.
+        """
         self.distance = distance
         self.match = match
         
@@ -20,6 +29,15 @@ class MinimumMatchingRate(Selection):
     min_match_rate times average matching times, so that it will be selected.
     """
     def __init__(self, data, simu, covariates, distance='Mahalanobis', match='NearestNeighbor'):
+        """Init by doing nothing new.
+
+        Args:
+            data (dataframe): Data to select.
+            simu (dataframe): Simulation to refer.
+            covariates (list): A list of strings, corresponding to field names of covariates in matching.
+            distance (str, optional): Distance definition. Defaults to 'mahalanobis'.
+            match (str, optional): Matching method definition. Defaults to 'NearestNeighbor'.
+        """
         super().__init__(data, simu, covariates, distance, match)
         self.data = data
         self.data_counts = len(data)

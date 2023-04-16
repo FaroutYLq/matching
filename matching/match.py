@@ -27,6 +27,14 @@ class NearestNeighbor(Match):
     """Each simulation event is matched to a data event with shortest distance to it.
     """
     def __init__(self, data, simu, covariates, distance='Mahalanobis'):
+        """Init by doing nothing new.
+
+        Args:
+            data (dataframe): Data to select.
+            simu (dataframe): Simulation to refer.
+            covariates (list): A list of strings, corresponding to field names of covariates in matching.
+            distance (str, optional): Distance definition. Defaults to 'mahalanobis'.
+        """
         super().__init__(data, simu, covariates, distance)
         self.method = 'NearestNeighbor'
 
