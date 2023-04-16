@@ -61,6 +61,13 @@ class Mahalanobis(Distance):
     """Distance computation based on Mahalnobis distance, which is normalized Euclidean distances.
     """
     def __init__(self, data, simu, covariates):
+        """Init by computing inverse sigma matrix.
+
+        Args:
+            data (dataframe): Data to select.
+            simu (dataframe): Simulation to refer.
+            covariates (list): A list of strings, corresponding to field names of covariates in matching.
+        """
         super().__init__(data, simu, covariates)
         self.method = 'Mahalanobis'
         self.sig_i = self.calc_inverse_sig()
