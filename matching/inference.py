@@ -1,6 +1,10 @@
 import numpy as np
 from .match import *
 
+# Should be enough for 20GB RAM
+DATA_BATCH_SIZE = 2500
+SIMU_BATCH_SIZE = 15000
+
 class Inference:
     def __init__(self, data, simu, covariates, distance='Mahalanobis', match='NearestNeighbor'):
         """Init Causal Inference by getting matching result.
@@ -18,11 +22,55 @@ class Inference:
         self.data_counts = len(data)
         self.simu_counts = len(simu)
         
-        match_class = eval(match)
-        match_object = match_class(data, simu, covariates, distance)
+        # Get segmented data batches in the form of a dictionary
+        data_batches = self.get_batches(data, batch_size=DATA_BATCH_SIZE)
 
-        # Load matches
-        self.matches = match_object.find_matches()
+        # Get match class to alleiviate computational burden.
+        batch_num = int(len(data)/DATA_BATCH_SIZE)
+        match_class = eval(match)
+        for i in tqdm(range(batch_num)):
+            if len(simu) <= SIMU_BATCH_SIZE:
+                simu_batches = simu
+            else:
+                simu_batches = simu.sample(n=SIMU_BATCH_SIZE)
+        match_object = match_class(data_batches[i], simu_batches, covariates, distance)
+        matches_i = match_object.find_matches()
+        matches_i = match_object.find_matches()
+        if i == 0:
+            self.matches = matches_i
+        else:
+            self.matches = pd.concat([self.matches, matches_i])
+
+    def get_batch_sizes(self, events, batch_size):
+        """Optimize the batch sizes based on the rough batch size input.
+
+        Args:
+            events (dataframe): Either data or simu.
+            batch_size (int): Number of events per batch
+
+        Returns:
+            optimized_batch_size (int): Optimized batch size.
+        """
+        batch_num = int(len(events)/batch_size)
+        optimized_batch_size = int(len(events)/batch_num)
+        return optimized_batch_size
+
+    def get_batches(self, events, batch_size):
+        """Segment events into batches as a dictionary.
+
+        Args:
+            events (dataframe): Either data or simu.
+            batch_size (int): Number of events per batch
+
+        Returns:
+            event_batches (dataframe): Events segmented into batches as a dictionary.
+        """
+        optimized_batch_size = self.get_batch_sizes(events, batch_size)
+        batch_num = int(len(events)/optimized_batch_size)
+        event_batches = {}
+        for i in range(batch_num):
+            event_batches[i] = events[i * optimized_batch_size : (i+1) * optimized_batch_size]
+        return event_batches
 
     def match_simu(self):
         """Match one data event to every simulation event.

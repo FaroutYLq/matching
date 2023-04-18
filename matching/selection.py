@@ -41,11 +41,29 @@ class Selection:
             self.matches = pd.concat([self.matches, matches_i])
 
     def get_batch_sizes(self, events, batch_size):
+        """Optimize the batch sizes based on the rough batch size input.
+
+        Args:
+            events (dataframe): Either data or simu.
+            batch_size (int): Number of events per batch
+
+        Returns:
+            optimized_batch_size (int): Optimized batch size.
+        """
         batch_num = int(len(events)/batch_size)
         optimized_batch_size = int(len(events)/batch_num)
         return optimized_batch_size
 
     def get_batches(self, events, batch_size):
+        """Segment events into batches as a dictionary.
+
+        Args:
+            events (dataframe): Either data or simu.
+            batch_size (int): Number of events per batch
+
+        Returns:
+            event_batches (dataframe): Events segmented into batches as a dictionary.
+        """
         optimized_batch_size = self.get_batch_sizes(events, batch_size)
         batch_num = int(len(events)/optimized_batch_size)
         event_batches = {}
