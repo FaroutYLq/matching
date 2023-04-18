@@ -12,4 +12,4 @@ pip install -e . --user
 ```
 
 ## Examples
-Please check `notebooks` folder.
+Please check `notebooks` folder. These only make sense to XENON colleagues for now.
