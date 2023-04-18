@@ -20,8 +20,12 @@ class Selection:
         """
         self.distance = distance
         self.match = match
+        self.data_batch_size = DATA_BATCH_SIZE
+        self.simu_batch_size = SIMU_BATCH_SIZE
 
         # Get segmented data batches in the form of a dictionary
+        optimized_batch_size = self.get_batch_sizes(data, DATA_BATCH_SIZE)
+        self.data_batch_size = optimized_batch_size
         data_batches = self.get_batches(data, batch_size=DATA_BATCH_SIZE)
 
         # Get match class to alleiviate computational burden.
@@ -36,7 +40,7 @@ class Selection:
             matches_i = match_object.find_matches()
 
             # Decode data index
-            matches_i['data_index'] += i*DATA_BATCH_SIZE
+            matches_i['data_index'] += i*optimized_batch_size
             matches_i['data_index'] -= min(len(simu), SIMU_BATCH_SIZE)
 
             if i == 0:
@@ -70,7 +74,7 @@ class Selection:
             event_batches (dataframe): Events segmented into batches as a dictionary.
         """
         optimized_batch_size = self.get_batch_sizes(events, batch_size)
-        batch_num = int(len(events)/optimized_batch_size) + 1
+        batch_num = int(len(events)/optimized_batch_size)
         event_batches = {}
         for i in range(batch_num):
             event_batches[i] = events[i * optimized_batch_size : (i+1) * optimized_batch_size]
