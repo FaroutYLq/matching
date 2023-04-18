@@ -25,7 +25,7 @@ class Selection:
         data_batches = self.get_batches(data, batch_size=DATA_BATCH_SIZE)
 
         # Get match class to alleiviate computational burden.
-        batch_num = int(len(data)/DATA_BATCH_SIZE)
+        batch_num = int(len(data)/DATA_BATCH_SIZE) + 1
         match_class = eval(match)
         for i in tqdm(range(batch_num)):
             if len(simu) <= SIMU_BATCH_SIZE:
@@ -37,7 +37,7 @@ class Selection:
 
             # Decode data index
             matches_i['data_index'] += i*DATA_BATCH_SIZE
-            matches_i['data_index'] -= max(len(simu), SIMU_BATCH_SIZE)
+            matches_i['data_index'] -= min(len(simu), SIMU_BATCH_SIZE)
 
             if i == 0:
                 matches = matches_i
@@ -55,7 +55,7 @@ class Selection:
         Returns:
             optimized_batch_size (int): Optimized batch size.
         """
-        batch_num = int(len(events)/batch_size)
+        batch_num = int(len(events)/batch_size) + 1
         optimized_batch_size = int(len(events)/batch_num)
         return optimized_batch_size
 
@@ -70,7 +70,7 @@ class Selection:
             event_batches (dataframe): Events segmented into batches as a dictionary.
         """
         optimized_batch_size = self.get_batch_sizes(events, batch_size)
-        batch_num = int(len(events)/optimized_batch_size)
+        batch_num = int(len(events)/optimized_batch_size) + 1
         event_batches = {}
         for i in range(batch_num):
             event_batches[i] = events[i * optimized_batch_size : (i+1) * optimized_batch_size]
