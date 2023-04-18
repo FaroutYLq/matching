@@ -1,9 +1,15 @@
 import numpy as np
 from .match import *
+from tqdm import tqdm
+
+# Should be enough for 20GB RAM
+DATA_BATCH_SIZE = 2500
+SIMU_BATCH_SIZE = 15000
 
 class Selection:
     def __init__(self, data, simu, covariates, distance='Mahalanobis', match='NearestNeighbor'):
-        """Init by getting matching result.
+        """Init by getting matching result. If input data or simu is big, they will be segmented into batches.
+        For data, they will be loaded in sequence, but for simulation they will be assiged randomly.
 
         Args:
             data (dataframe): Data to select.
@@ -14,12 +20,45 @@ class Selection:
         """
         self.distance = distance
         self.match = match
-        
-        match_class = eval(match)
-        match_object = match_class(data, simu, covariates, distance)
 
-        # Load matches
-        self.matches = match_object.find_matches()
+        # Get segmented data batches in the form of a dictionary
+        data_batches = self.get_batches(data, batch_size=DATA_BATCH_SIZE)
+
+        # Get match class to alleiviate computational burden.
+        batch_num = int(len(data)/DATA_BATCH_SIZE)
+        match_class = eval(match)
+        if len(simu) <= SIMU_BATCH_SIZE:
+            for i in tqdm(range(batch_num)):
+                match_object = match_class(data_batches[i], simu, covariates, distance)
+                matches_i = match_object.find_matches()
+                if i == 0:
+                    self.matches = matches_i
+                else:
+                    self.matches = pd.concat([self.matches, matches_i])
+        else:
+            for i in tqdm(range(batch_num)):
+                match_object = match_class(data_batches[i], simu.sample(n=SIMU_BATCH_SIZE), 
+                                               covariates, distance)
+                matches_i = match_object.find_matches()
+                matches_i = match_object.find_matches()
+                if i == 0:
+                    self.matches = matches_i
+                else:
+                    self.matches = pd.concat([self.matches, matches_i])
+
+    def get_batch_sizes(self, events, batch_size):
+        batch_num = int(len(events)/batch_size)
+        optimized_batch_size = int(len(events)/batch_num)
+        return optimized_batch_size
+
+    def get_batches(self, events, batch_size):
+        optimized_batch_size = self.get_batch_sizes(events, batch_size)
+        batch_num = int(len(events)/optimized_batch_size)
+        event_batches = {}
+        for i in range(batch_num):
+            event_batches[i] = events[i * optimized_batch_size : (i+1) * optimized_batch_size]
+        return event_batches
+
 
 class MinimumMatchingRate(Selection):
     """We will check how often a data event is matched to simulation. 
