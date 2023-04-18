@@ -32,13 +32,18 @@ class Selection:
                 simu_batches = simu
             else:
                 simu_batches = simu.sample(n=SIMU_BATCH_SIZE)
-        match_object = match_class(data_batches[i], simu_batches, covariates, distance)
-        matches_i = match_object.find_matches()
-        matches_i = match_object.find_matches()
-        if i == 0:
-            self.matches = matches_i
-        else:
-            self.matches = pd.concat([self.matches, matches_i])
+            match_object = match_class(data_batches[i], simu_batches, covariates, distance)
+            matches_i = match_object.find_matches()
+
+            # Decode data index
+            matches_i['data_index'] += i*DATA_BATCH_SIZE
+            matches_i['data_index'] -= max(len(simu), SIMU_BATCH_SIZE)
+
+            if i == 0:
+                matches = matches_i
+            else:
+                matches = pd.concat([matches, matches_i])
+        self.matches = matches
 
     def get_batch_sizes(self, events, batch_size):
         """Optimize the batch sizes based on the rough batch size input.
@@ -69,6 +74,7 @@ class Selection:
         event_batches = {}
         for i in range(batch_num):
             event_batches[i] = events[i * optimized_batch_size : (i+1) * optimized_batch_size]
+
         return event_batches
 
 

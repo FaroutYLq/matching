@@ -1,5 +1,6 @@
 import numpy as np
 from .match import *
+from tqdm import tqdm
 
 # Should be enough for 20GB RAM
 DATA_BATCH_SIZE = 2500
@@ -33,13 +34,18 @@ class Inference:
                 simu_batches = simu
             else:
                 simu_batches = simu.sample(n=SIMU_BATCH_SIZE)
-        match_object = match_class(data_batches[i], simu_batches, covariates, distance)
-        matches_i = match_object.find_matches()
-        matches_i = match_object.find_matches()
-        if i == 0:
-            self.matches = matches_i
-        else:
-            self.matches = pd.concat([self.matches, matches_i])
+            match_object = match_class(data_batches[i], simu_batches, covariates, distance)
+            matches_i = match_object.find_matches()
+
+            # Decode data index
+            matches_i['data_index'] += i*DATA_BATCH_SIZE
+            matches_i['data_index'] -= max(len(simu), SIMU_BATCH_SIZE)
+
+            if i == 0:
+                matches = matches_i
+            else:
+                matches = pd.concat([matches, matches_i])
+        self.matches = matches
 
     def get_batch_sizes(self, events, batch_size):
         """Optimize the batch sizes based on the rough batch size input.
