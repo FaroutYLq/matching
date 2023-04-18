@@ -92,7 +92,6 @@ class Inference:
 
         # Assumed simulation always has smaller indices
         selected_data_idx = np.repeat(matched_counts.index, matched_counts['counts'].values)
-        selected_data_idx -=  self.simu_counts 
 
         # matched data
         matched_data = self.data[selected_data_idx]

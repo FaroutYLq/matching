@@ -125,7 +125,7 @@ class MinimumMatchingRate(Selection):
         selected_counts = matched_counts[selected_mask]
 
         # Assumed simulation always has smaller indices
-        selected_data_idx = np.array(selected_counts.index) - self.simu_counts
+        selected_data_idx = np.array(selected_counts.index)
         selected_data_mask = np.zeros(self.data_counts, dtype=np.bool)
         selected_data_mask[selected_data_idx] = True
 
