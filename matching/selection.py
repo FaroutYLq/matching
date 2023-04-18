@@ -27,24 +27,18 @@ class Selection:
         # Get match class to alleiviate computational burden.
         batch_num = int(len(data)/DATA_BATCH_SIZE)
         match_class = eval(match)
-        if len(simu) <= SIMU_BATCH_SIZE:
-            for i in tqdm(range(batch_num)):
-                match_object = match_class(data_batches[i], simu, covariates, distance)
-                matches_i = match_object.find_matches()
-                if i == 0:
-                    self.matches = matches_i
-                else:
-                    self.matches = pd.concat([self.matches, matches_i])
+        for i in tqdm(range(batch_num)):
+            if len(simu) <= SIMU_BATCH_SIZE:
+                simu_batches = simu
+            else:
+                simu_batches = simu.sample(n=SIMU_BATCH_SIZE)
+        match_object = match_class(data_batches[i], simu_batches, covariates, distance)
+        matches_i = match_object.find_matches()
+        matches_i = match_object.find_matches()
+        if i == 0:
+            self.matches = matches_i
         else:
-            for i in tqdm(range(batch_num)):
-                match_object = match_class(data_batches[i], simu.sample(n=SIMU_BATCH_SIZE), 
-                                               covariates, distance)
-                matches_i = match_object.find_matches()
-                matches_i = match_object.find_matches()
-                if i == 0:
-                    self.matches = matches_i
-                else:
-                    self.matches = pd.concat([self.matches, matches_i])
+            self.matches = pd.concat([self.matches, matches_i])
 
     def get_batch_sizes(self, events, batch_size):
         batch_num = int(len(events)/batch_size)
