@@ -3,7 +3,7 @@ from .match import *
 from tqdm import tqdm
 
 # Should be enough for 20GB RAM
-DATA_BATCH_SIZE = 2500
+DATA_BATCH_SIZE = 5500
 SIMU_BATCH_SIZE = 15000
 
 class Inference:
