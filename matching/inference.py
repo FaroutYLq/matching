@@ -1,6 +1,7 @@
 import numpy as np
 from .match import *
 from tqdm import tqdm
+import pandas as pd
 
 # Should be enough for 20GB RAM
 DATA_BATCH_SIZE = 2500
@@ -17,6 +18,11 @@ class Inference:
             distance (str, optional): Distance definition. Defaults to 'mahalanobis'.
             match (str, optional): Matching method definition. Defaults to 'NearestNeighbor'.
         """
+        if isinstance(data, np.ndarray):
+            data = pd.DataFrame(data)
+        if isinstance(simu, np.ndarray):
+            simu = pd.DataFrame(simu)
+
         self.distance = distance
         self.match = match
         self.data = data
@@ -37,7 +43,10 @@ class Inference:
             if len(simu) <= SIMU_BATCH_SIZE:
                 simu_batches = simu
             else:
-                simu_batches = simu.sample(n=SIMU_BATCH_SIZE)
+                if len(simu) <= SIMU_BATCH_SIZE:
+                    simu_batches = simu
+                else:
+                    simu_batches = simu.sample(n=SIMU_BATCH_SIZE)
             match_object = match_class(data_batches[i], simu_batches, covariates, distance)
             matches_i = match_object.find_matches()
 
@@ -86,7 +95,7 @@ class Inference:
         """Match one data event to every simulation event.
 
         Returns:
-            matched_data (dataframe): Matched data events.
+            matched_data (dataframe): Data matched to simulation
         """
         matches = self.matches
 
@@ -98,6 +107,6 @@ class Inference:
         selected_data_idx = np.repeat(matched_counts.index, matched_counts['counts'].values)
 
         # matched data
-        matched_data = self.data[selected_data_idx]
+        matched_data = self.data.iloc[selected_data_idx]
 
         return matched_data
