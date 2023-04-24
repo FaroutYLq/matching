@@ -18,6 +18,11 @@ class Selection:
             distance (str, optional): Distance definition. Defaults to 'mahalanobis'.
             match (str, optional): Matching method definition. Defaults to 'NearestNeighbor'.
         """
+        if isinstance(data, np.ndarray):
+            data = pd.DataFrame(data)
+        if isinstance(simu, np.ndarray):
+            data = pd.DataFrame(simu)
+            
         self.distance = distance
         self.match = match
         self.data_batch_size = DATA_BATCH_SIZE

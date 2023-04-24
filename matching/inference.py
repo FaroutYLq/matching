@@ -1,6 +1,7 @@
 import numpy as np
 from .match import *
 from tqdm import tqdm
+import pandas as pd
 
 # Should be enough for 20GB RAM
 DATA_BATCH_SIZE = 2500
@@ -17,6 +18,11 @@ class Inference:
             distance (str, optional): Distance definition. Defaults to 'mahalanobis'.
             match (str, optional): Matching method definition. Defaults to 'NearestNeighbor'.
         """
+        if isinstance(data, np.ndarray):
+            data = pd.DataFrame(data)
+        if isinstance(simu, np.ndarray):
+            data = pd.DataFrame(simu)
+            
         self.distance = distance
         self.match = match
         self.data = data
