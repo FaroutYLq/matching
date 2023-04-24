@@ -22,7 +22,7 @@ class Inference:
             data = pd.DataFrame(data)
         if isinstance(simu, np.ndarray):
             data = pd.DataFrame(simu)
-            
+
         self.distance = distance
         self.match = match
         self.data = data
@@ -92,7 +92,7 @@ class Inference:
         """Match one data event to every simulation event.
 
         Returns:
-            matched_data (dataframe): Matched data events.
+            matched_data (dataframe): Data matched to simulation
         """
         matches = self.matches
 
@@ -104,6 +104,6 @@ class Inference:
         selected_data_idx = np.repeat(matched_counts.index, matched_counts['counts'].values)
 
         # matched data
-        matched_data = self.data[selected_data_idx]
+        matched_data = np.array(self.data)[selected_data_idx]
 
-        return matched_data
+        return pd.DataFrame(matched_data)
