@@ -21,7 +21,7 @@ class Inference:
         if isinstance(data, np.ndarray):
             data = pd.DataFrame(data)
         if isinstance(simu, np.ndarray):
-            data = pd.DataFrame(simu)
+            simu = pd.DataFrame(simu)
 
         self.distance = distance
         self.match = match
@@ -43,7 +43,10 @@ class Inference:
             if len(simu) <= SIMU_BATCH_SIZE:
                 simu_batches = simu
             else:
-                simu_batches = simu.sample(n=SIMU_BATCH_SIZE)
+                if len(simu) <= SIMU_BATCH_SIZE:
+                    simu_batches = simu
+                else:
+                    simu_batches = simu.sample(n=SIMU_BATCH_SIZE)
             match_object = match_class(data_batches[i], simu_batches, covariates, distance)
             matches_i = match_object.find_matches()
 
@@ -104,6 +107,6 @@ class Inference:
         selected_data_idx = np.repeat(matched_counts.index, matched_counts['counts'].values)
 
         # matched data
-        matched_data = np.array(self.data)[selected_data_idx]
+        matched_data = self.data.iloc[selected_data_idx]
 
-        return pd.DataFrame(matched_data)
+        return matched_data
