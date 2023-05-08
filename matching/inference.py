@@ -34,6 +34,7 @@ class Inference:
         simu = simu[simu_mask]
 
         self.data = data
+        self.simu = simu
         self.data_counts = len(data)
         self.simu_counts = len(simu)
         self.data_batch_size = DATA_BATCH_SIZE
