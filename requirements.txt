@@ -1,5 +1,3 @@
-strax>=1.1.8
-straxen>=1.4.0
 scipy
 numpy
 pandas
