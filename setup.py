@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name='matching',
-    version='0.0.0',
+    version='0.0.1',
     install_requires=requires,
     packages=setuptools.find_packages(),
 )
