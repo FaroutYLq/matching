@@ -15,9 +15,9 @@ class Match:
         distance_class = eval(distance)
         distance_object = distance_class(data, simu, covariates)
 
-        print('Computing %s distances...'%(distance)) 
+        #print('Computing %s distances...'%(distance)) 
         distances = distance_object.calc_distances()
-        print('Distances have been computed')
+        #print('Distances have been computed')
         self.df = distance_object.df
 
         self.distances = distances
@@ -45,13 +45,13 @@ class NearestNeighbor(Match):
         Returns:
             df_matched (dataframe): matched result in this format "simu_index - data_index - distance"
         """
-        print('Computing %s matching...'%(self.method))
+        #print('Computing %s matching...'%(self.method))
         df = self.distances
 
         s_argmin = df.groupby(['simu_index'])['distance'].idxmin()
         matches = df.loc[s_argmin][['simu_index', 'data_index', 'distance']]
 
-        print('Matching has been computed.')
+        #print('Matching has been computed.')
 
         return matches
     
