@@ -84,6 +84,10 @@ class Mahalanobis(Distance):
 
         # Compute inverse of covariance of covariates matrix
         sig = np.cov(x)
+        # In case we only have one covariate
+        if len(np.shape(sig))==0:
+            sig = np.array([[sig]])
+
         sig_i = np.linalg.inv(sig)
         
         return sig_i
