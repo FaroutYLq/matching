@@ -1,4 +1,5 @@
 # matching
+[![DOI](https://zenodo.org/badge/628000638.svg)](https://doi.org/10.5281/zenodo.14607623)
 Matched Sampling for data selection and causal inference.
 
 ## Concepts
